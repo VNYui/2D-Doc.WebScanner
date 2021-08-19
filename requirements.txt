@@ -1,0 +1,8 @@
+Flask==2.0.1
+pyzbar==0.1.8
+numpy==1.21.2
+Flask_Classful==0.14.2
+imutils==0.5.4
+cbor2==5.4.1
+base45==0.4.2
+Pillow==8.3.1
