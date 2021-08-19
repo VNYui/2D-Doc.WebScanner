@@ -1,0 +1,12 @@
+{% extends './base_head.html' %}
+{% block body %}
+    <div class="container">
+        <div class='row'>
+            {% for results in result %}
+                <div>
+                    <li>{{ result }}</li>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

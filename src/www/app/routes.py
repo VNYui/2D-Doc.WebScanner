@@ -10,6 +10,10 @@ class ResumeQR(FlaskView):
 
     def index(self):
         return Response(self.gen(cam),mimetype='multipart/x-mixed-replace; boundary=frame')
+    @route('/result')
+    def result(self):
+        result = cam.get_result()
+        return render_template('result.html', result=result)
 
     def gen(self,camera):
         while True:
