@@ -10,6 +10,11 @@ import pyzbar.pyzbar
 import base45
 import cbor2
 import pprint
+#SERIALIZER 
+from ast import literal_eval
+import json
+import cbor_json
+import pickle
 
 class Cam():
     def __init__(self):
@@ -23,12 +28,11 @@ class Cam():
         cv2.destroyAllWindows()
 
     def get_result(self):
-        result = {
-            'header' : cbor2.loads(self.decoded.value[0]),
-            'payload' : cbor2.loads(self.decoded.value[2]),
-            'signature' : self.decoded.value[3]
-        }
-        return result
+        print(type(self.decoded))
+        
+        result = [str(cbor2.loads(self.decoded.value[0])), str(cbor2.loads(self.decoded.value[2])), str(self.decoded.value[3])]
+        result_json = json.dumps(result, indent=4, sort_keys=True)
+        return result_json
 
     def decode(self, img):
             data = pyzbar.pyzbar.decode(img)
@@ -36,17 +40,17 @@ class Cam():
             b45data = cert.replace("HC1:", "")
             zlibdata = base45.b45decode(b45data)
             cbordata = zlib.decompress(zlibdata)
-            self.decoded = cbor2.loads(cbordata)
-            print("Header\n----------------")
-            pprint.pprint(cbor2.loads(self.decoded.value[0]))
-            print("\nPayload\n----------------")
-            pprint.pprint(cbor2.loads(self.decoded.value[2]))
-            print("\nSignature ?\n----------------")
-            print(self.decoded.value[3])
-            return self.decoded
+            decoded = cbor2.loads(cbordata)
+            if decoded:
+                #serialize
+                self.decoded = decoded
+                with open('pickle.pickle', 'wb') as f:
+                    pickle.dump(str(self.decoded), f)
+                print('Data decoded')
+                return self.decoded
+    
     def get_framesAndDecode(self):    
         ret,img = self.cam.read()
-        
         # detect and decode
         data, bbox, ret = self.detector.detectAndDecode(img)             
         # decypher B45 and CBOR payload
